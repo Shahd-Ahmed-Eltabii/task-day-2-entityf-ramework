@@ -11,7 +11,7 @@ using task_day_2_entityf_ramework;
 namespace task_day_2_entityf_ramework.Migrations
 {
     [DbContext(typeof(appdbcontent))]
-    [Migration("20260815205932_InitialCreate")]
+    [Migration("20260817061412_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -40,11 +40,16 @@ namespace task_day_2_entityf_ramework.Migrations
                     b.Property<int>("durationInHours")
                         .HasColumnType("int");
 
+                    b.Property<int>("instructorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("instructorId");
 
                     b.ToTable("Courses");
 
@@ -54,6 +59,7 @@ namespace task_day_2_entityf_ramework.Migrations
                             Id = 1,
                             description = "Learn the basics of C# programming language including variables, loops and OOP concepts.",
                             durationInHours = 30,
+                            instructorId = 1,
                             name = "C# Fundamentals"
                         },
                         new
@@ -61,6 +67,7 @@ namespace task_day_2_entityf_ramework.Migrations
                             Id = 2,
                             description = "Build modern web applications and APIs using ASP.NET Core framework.",
                             durationInHours = 40,
+                            instructorId = 2,
                             name = "ASP.NET Core"
                         },
                         new
@@ -68,6 +75,7 @@ namespace task_day_2_entityf_ramework.Migrations
                             Id = 3,
                             description = "Master Code First approach, migrations, relationships and querying with EF Core.",
                             durationInHours = 25,
+                            instructorId = 1,
                             name = "Entity Framework Core"
                         },
                         new
@@ -75,6 +83,7 @@ namespace task_day_2_entityf_ramework.Migrations
                             Id = 4,
                             description = "Understand database design, T-SQL queries, joins and stored procedures.",
                             durationInHours = 20,
+                            instructorId = 3,
                             name = "SQL Server Basics"
                         },
                         new
@@ -82,7 +91,56 @@ namespace task_day_2_entityf_ramework.Migrations
                             Id = 5,
                             description = "Introduction to HTML, CSS and JavaScript for building interactive websites.",
                             durationInHours = 35,
+                            instructorId = 2,
                             name = "Web Development"
+                        });
+                });
+
+            modelBuilder.Entity("task_day_2_entityf_ramework.instructor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("specialization")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Instructors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            email = "ahmed@test.com",
+                            name = "Ahmed Ali",
+                            specialization = "Backend"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            email = "mona@test.com",
+                            name = "Mona Hassan",
+                            specialization = "Frontend"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            email = "omar@test.com",
+                            name = "Omar Said",
+                            specialization = "Database"
                         });
                 });
 
@@ -199,6 +257,52 @@ namespace task_day_2_entityf_ramework.Migrations
                             fullname = "Hana Sameh",
                             percent = 82m
                         });
+                });
+
+            modelBuilder.Entity("task_day_2_entityf_ramework.studentCourse", b =>
+                {
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StudentId", "CourseId");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("StudentCourses");
+                });
+
+            modelBuilder.Entity("task_day_2_entityf_ramework.course", b =>
+                {
+                    b.HasOne("task_day_2_entityf_ramework.instructor", "instructor")
+                        .WithMany("Courses")
+                        .HasForeignKey("instructorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("instructor");
+                });
+
+            modelBuilder.Entity("task_day_2_entityf_ramework.studentCourse", b =>
+                {
+                    b.HasOne("task_day_2_entityf_ramework.course", null)
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("task_day_2_entityf_ramework.student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("task_day_2_entityf_ramework.instructor", b =>
+                {
+                    b.Navigation("Courses");
                 });
 #pragma warning restore 612, 618
         }

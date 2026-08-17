@@ -13,6 +13,7 @@ namespace task_day_2_entityf_ramework
         public string Email { get; set; }
         public int age { get; set; }
         public int percent { get; set; }
+        public ICollection<course> Courses { get; set; } 
 
 
     }

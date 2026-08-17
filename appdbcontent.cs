@@ -12,6 +12,9 @@ namespace task_day_2_entityf_ramework
     {
         public DbSet<student> Students { get; set; }
         public DbSet<course> Courses { get; set; }
+        public DbSet<instructor> Instructors { get; set; }
+
+        public DbSet<studentCourse> StudentCourses { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -30,6 +33,15 @@ namespace task_day_2_entityf_ramework
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(studentconfig).Assembly);
+            modelBuilder.Entity<studentCourse>()
+                .HasKey(sc => new { sc.StudentId, sc.CourseId });
+            modelBuilder.Entity<student>()
+                .HasMany(s => s.Courses)
+                .WithMany(c => c.Students).UsingEntity<studentCourse>();
+
+            modelBuilder.Entity<instructor>().HasMany(i => i.Courses).WithOne(c => c.instructor).HasForeignKey((c) => c.instructorId);
+
+
         }
     }
 
